@@ -123,35 +123,29 @@ class MotionPlanning(Drone):
 
         self.target_position[2] = TARGET_ALTITUDE
 
-        lat0 = 37.792480
-        lon0 = -122.397450
+        #lat0 = 37.792480
+        #lon0 = -122.397450
 
-        #lat0, lon0 = readLatLon('colliders.csv')
-        #f = open('colliders.csv','r')
-        #line = f.readlines()[:2]
-        #lat0, lon0 = line[1].split(',')
-        #f.close()
-        print('Lat {0}, Lon {0}'.format(lat0, lon0))
-        
+        with open('colliders.csv') as f:
+            home_pos_data = f.readline().split(",")
+        lat0 = float(home_pos_data[0].strip().split(" ")[1])
+        lon0 = float(home_pos_data[1].strip().split(" ")[1])
+        print(lat0, lon0)
+
         # TODO: set home position to (lat0, lon0, 0)
         self.set_home_position(lat0, lon0, 0)
 
         # TODO: retrieve current global position
-        #self.global_position = self.global_position()
-        global_home = np.array([self._home_longitude, self._home_latitude, self._home_altitude])
-        current_position = np.array([self._longitude, self._latitude, self._altitude])
- 
+        global_pos = [self._longitude, self._latitude, self._altitude]
+
         # TODO: convert to current local position using global_to_local
         # Note current_local_pos is in NED
-        current_local_pos_NED = np.array([0.0,0.0,0.0])
-        current_local_pos_NED = global_to_local(global_home, current_position)
+        local_pos = global_to_local(global_pos, self.global_home)
 
-        self._update_local_position(current_local_pos_NED)
-
-        print('global home {0}, position {1}, local position {2}'.format(global_home, current_position, current_local_pos_NED))
+        print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position, self.local_position))
 
         # Read in obstacle map
-        data = np.loadtxt('colliders.csv', delimiter=',', dtype='Float64', skiprows=3)
+        data = np.loadtxt('colliders.csv', delimiter=',', dtype='Float64', skiprows=2)
         print(data)
         
         # Define a grid for a particular altitude and safety margin around obstacles
@@ -161,10 +155,10 @@ class MotionPlanning(Drone):
         print(grid)
 
         # Define starting point on the grid (this is just grid center)
-        grid_start = (-north_offset, -east_offset)
+        #grid_start = (-north_offset, -east_offset)
 
         # TODO: convert start position to current position rather than map center
-        start = (int(current_local_pos_NED[0]+north_offset), int(current_local_pos_NED[1]+east_offset))
+        grid_start = (int(local_pos[0]-north_offset), int(local_pos[1]-east_offset))
         
         # Set goal as some arbitrary position on the grid
         # Changed this to any arbitrary position by adding random offsets to north and east
@@ -172,20 +166,21 @@ class MotionPlanning(Drone):
         grid_goal = (-north_offset + 10, -east_offset + 10)
 
         # TODO: adapt to set goal as latitude / longitude position and convert
-        # TODO_later: use algorithm as NED for now
 
 
         # Run A* to find a path from start to goal
         # TODO: add diagonal motions with a cost of sqrt(2) to your A* implementation
         # or move to a different search space such as a graph (not done here)
-        print('Local Start and Goal: ', grid_start, grid_goal)
-        path, _ = a_star(grid, heuristic_sqrt, grid_start, grid_goal)
+        print('grid start and grid goal: ', grid_start, grid_goal)
+
+        path, cost = a_star(grid, heuristic_sqrt, grid_start, grid_goal)
+        print('Found path: len/cost: ', (path), cost)
         
         # TODO: prune path to minimize number of waypoints
         # TODO (if you're feeling ambitious): Try a different approach altogether!
 
         pruned_path = prune_path(path)
-        print(len(pruned_path))
+        print('pruned path len: ', len(pruned_path))
 
         # Convert path to waypoints
         waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in path]
