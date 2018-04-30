@@ -101,13 +101,15 @@ The current local position is set as follows:
 
 #### 3. Setting grid start position from local position
 
-This is another step in adding flexibility to the start location. As long as it works you're good to go!
+The grid start is set in terms of current position. Note that the obstacle map is specified in terms of NE points so we take local position in NED and for adjust north offset and east offset as grid start accordingly for x and y coordinates. 
+
+      grid_start = (int(local_pos[0]-north_offset), int(local_pos[1]-east_offset))
 
 
 #### 4. Setting grid goal position from geodetic coords
 
-
-This step is to add flexibility to the desired goal location. Should be able to choose any (lat, lon) within the map and have it rendered to a goal location on the grid.
+`
+This step is to add flexibility to the desired goal location. Here we are adding +10 to each offsets. 
 
 
 #### 5. Modified A* to include diagonal motion 
@@ -141,6 +143,6 @@ If three points (p1, p2, p3) lie on the same line then p2 can be dropped from th
 The waypoints are sent to the emulator and before changing the state to takeoff the found path is executed by the simulator. 
 
   
-### Extra Challenges: Real World Planning (TBD -- 4/14/18)
+### Extra Challenges: Real World Planning (TBD -- 4/29/18. Revisit later)
 
 For an extra challenge, consider implementing some of the techniques described in the "Real World Planning" lesson. You could try implementing a vehicle model to take dynamic constraints into account, or implement a replanning method to invoke if you get off course or encounter unexpected obstacles.
