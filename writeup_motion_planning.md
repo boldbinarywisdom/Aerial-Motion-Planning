@@ -142,7 +142,51 @@ If three points (p1, p2, p3) lie on the same line then p2 can be dropped from th
 
 The waypoints are sent to the emulator and before changing the state to takeoff the found path is executed by the simulator. 
 
-  
+Here is the project execution output on the python console. 
+
+---------------------------------------------------------------------------------------------------------------------------
+
+(FCND) rbtiger@McTiger:~/projects/Udacity/Aerial/FCND-Motion-Planning$python motion_planning.py 
+Logs/TLog.txt
+Logs/NavLog.txt
+starting connection
+arming transition
+Planning for a path before takeoff ...
+37.79248 -122.39745
+global home [-122.39745   37.79248    0.     ], position [-1.22397450e+02  3.77924802e+01  9.00000000e-03], local position [ 0.03299278 -0.00097993 -0.00952613]
+North offset = -316, east offset = -445
+Local Start and Goal:  (316, 445) (199, 195)
+Found a path.
+Sending waypoints to simulator ...
+takeoff transition
+waypoint transition
+target position [0, 0, 100, 0]
+waypoint transition
+target position [-115, -115, 100, 0]
+waypoint transition
+target position [-115, -123, 100, 0]
+waypoint transition
+target position [-142, -150, 100, 0]
+waypoint transition
+target position [-142, -170, 100, 0]
+waypoint transition
+target position [-122, -190, 100, 0]
+waypoint transition
+target position [-122, -218, 100, 0]
+waypoint transition
+target position [-117, -223, 100, 0]
+waypoint transition
+target position [-117, -250, 100, 0]
+landing transition
+disarm transition
+manual transition
+Closing connection ...
+(FCND) rbtiger@McTiger:~/projects/Udacity/Aerial/FCND-Motion-Planning$
+
+--------------------------------------------------------------------------------------------------------------------------
+
+
+
 ### Extra Challenges: Real World Planning (TBD -- 4/29/18. Revisit later)
 
 For an extra challenge, consider implementing some of the techniques described in the "Real World Planning" lesson. You could try implementing a vehicle model to take dynamic constraints into account, or implement a replanning method to invoke if you get off course or encounter unexpected obstacles.
